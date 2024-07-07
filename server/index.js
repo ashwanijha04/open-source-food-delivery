@@ -13,7 +13,12 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Define Routes
+const dishesRoutes = require('./routers/dishesRoutes');
+
+
 app.use('/api/restaurants', require('./routers/restaurantRoutes'));
+app.use('/api/restaurants', dishesRoutes);
+
 
 const PORT = 8081;
 

@@ -1,5 +1,10 @@
 const express = require('express');
-const { getRestaurants, createRestaurant } = require('../controllers/restaurantController');
+const {
+  getRestaurants,
+  createRestaurant,
+  updateRestaurant,
+  deleteRestaurant,
+} = require('../controllers/restaurantController');
 const router = express.Router();
 
 // @route GET /api/restaurants
@@ -11,5 +16,15 @@ router.get('/', getRestaurants);
 // @desc Create a new restaurant
 // @access Public
 router.post('/', createRestaurant);
+
+// @route PUT /api/restaurants/:id
+// @desc Update a restaurant
+// @access Public
+router.put('/:id', updateRestaurant);
+
+// @route DELETE /api/restaurants/:id
+// @desc Delete a restaurant
+// @access Public
+router.delete('/:id', deleteRestaurant);
 
 module.exports = router;
