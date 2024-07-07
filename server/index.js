@@ -1,18 +1,44 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import RestaurantList from './Components/RestaurantList';
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const connectDB = require('./config/db');
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App/>
-  </React.StrictMode>
-);
+const app = express();
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+// Connect Database
+connectDB();
+
+// Middleware
+app.use(cors());
+app.use(bodyParser.json());
+
+// Define Routes
+const dishesRoutes = require('./routers/dishesRoutes');
+const cartRoutes = require('./routers/cartRoutes');
+
+
+
+
+app.use('/api/restaurants', require('./routers/restaurantRoutes'));
+app.use('/api/restaurants', dishesRoutes);
+app.use('/api', cartRoutes);
+
+
+
+const PORT = 8081;
+
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+
+
+
+// server
+// ├── config
+// │   └── db.js
+// ├── controllers
+// │   └── restaurantController.js
+// ├── models
+// │   └── restaurantModel.js
+// ├── routers
+// │   └── restaurantRoutes.js
+// ├── app.js
+// └── package.json

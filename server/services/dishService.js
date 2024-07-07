@@ -1,47 +1,81 @@
-import axios from 'axios';
-
-const API_URL = 'http://localhost:8081/api/restaurants';
+const Dish = require('../models/dishModel');
 
 // Fetch all dishes for a restaurant
-export const getDishesByRestaurant = async (restaurantId) => {
+const getDishesByRestaurant = async (restaurantId) => {
   try {
-    const response = await axios.get(`${API_URL}/${restaurantId}/dishes`);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching dishes:', error);
-    throw error;
+    const dishes = await Dish.find({ restaurantId });
+    return dishes;
+  } catch (err) {
+    throw new Error('Error fetching dishes');
   }
 };
 
 // Create a new dish for a restaurant
-export const createDish = async (restaurantId, dishData) => {
+const createDish = async (restaurantId, dishData) => {
+  const { name, description, price } = dishData;
+
+  if (!name || !description || !price) {
+    throw new Error('Please provide all required fields');
+  }
+
+  const dish = new Dish({
+    name,
+    description,
+    price,
+    restaurantId
+  });
+
   try {
-    const response = await axios.post(`${API_URL}/${restaurantId}/dishes`, dishData);
-    return response.data;
-  } catch (error) {
-    console.error('Error creating dish:', error);
-    throw error;
+    const newDish = await dish.save();
+    return newDish;
+  } catch (err) {
+    throw new Error('Error creating dish');
   }
 };
 
 // Update a dish
-export const updateDish = async (dishId, dishData) => {
+const updateDish = async (id, dishData) => {
+  const { name, description, price } = dishData;
+
+  if (!name || !description || !price) {
+    throw new Error('Please provide all required fields');
+  }
+
   try {
-    const response = await axios.put(`${API_URL}/dishes/${dishId}`, dishData);
-    return response.data;
-  } catch (error) {
-    console.error('Error updating dish:', error);
-    throw error;
+    const dish = await Dish.findByIdAndUpdate(
+      id,
+      { name, description, price },
+      { new: true, runValidators: true }
+    );
+
+    if (!dish) {
+      throw new Error('Dish not found');
+    }
+
+    return dish;
+  } catch (err) {
+    throw new Error('Error updating dish');
   }
 };
 
 // Delete a dish
-export const deleteDish = async (dishId) => {
+const deleteDish = async (id) => {
   try {
-    const response = await axios.delete(`${API_URL}/dishes/${dishId}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error deleting dish:', error);
-    throw error;
+    const dish = await Dish.findByIdAndDelete(id);
+
+    if (!dish) {
+      throw new Error('Dish not found');
+    }
+
+    return dish;
+  } catch (err) {
+    throw new Error('Error deleting dish');
   }
+};
+
+module.exports = {
+  getDishesByRestaurant,
+  createDish,
+  updateDish,
+  deleteDish
 };
